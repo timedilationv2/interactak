@@ -1,510 +1,322 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arsalan Khan - Technical Writer & Documentation Specialist</title>
+    <title>Interactive Resume | Arsalan Khan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #f8fafc;
-            --card-bg-color: #ffffff;
-            --text-primary: #1f2937;
-            --text-secondary: #4b5563;
-            --accent-color: #3b82f6;
-            --accent-color-subtle: #eff6ff;
-            --border-color: #e5e7eb;
-        }
         body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
             font-family: 'Inter', sans-serif;
+            background-color: #111827; /* Tailwind gray-900 */
+            color: #D1D5DB; /* Tailwind gray-300 */
         }
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Lora', serif;
-            color: var(--text-primary);
+        .skill-tab.active {
+            background-color: #3B82F6; /* Tailwind blue-500 */
+            color: #FFFFFF;
         }
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
+        .section-title {
+            border-bottom: 2px solid #3B82F6;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
         }
-        @media (min-width: 1024px) {
-            .main-layout {
-                grid-template-columns: 340px 1fr;
-            }
-        }
-        .card {
-            background-color: var(--card-bg-color);
-            border-radius: 0.75rem;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        }
-        .tab-button {
-            transition: all 0.2s ease-in-out;
-            border-bottom: 3px solid transparent;
-            padding-bottom: 0.75rem;
-            margin-bottom: -1px; /* Overlap the border */
-        }
-        .tab-button.active {
-            color: var(--accent-color);
-            border-bottom-color: var(--accent-color);
-        }
-        .content-section { display: none; }
-        .content-section.active { display: block; }
-        
-        .timeline {
-            position: relative;
-            padding-left: 2.5rem;
-        }
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0.5rem;
-            top: 0.25rem;
-            bottom: 0.25rem;
-            width: 2px;
-            background-color: var(--border-color);
-        }
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -2rem;
-            top: 9px;
-            width: 0.75rem;
-            height: 0.75rem;
-            border-radius: 9999px;
-            background-color: var(--accent-color-subtle);
-            border: 2px solid var(--accent-color);
-        }
-        .skill-tag {
-            background-color: var(--accent-color-subtle);
-            color: var(--accent-color);
-            font-weight: 500;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-        }
-        .project-card {
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            transition: all 0.2s ease-in-out;
-        }
-        .project-card:hover {
-            border-color: var(--accent-color);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        /* Chatbot styles */
-        #chat-widget {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 1000;
-        }
-        #chat-bubble {
-            width: 60px;
-            height: 60px;
-            background-color: var(--accent-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: transform 0.2s ease;
-        }
-        #chat-bubble:hover {
-            transform: scale(1.1);
-        }
-        #chat-window {
-            position: absolute;
-            bottom: 80px;
-            right: 0;
-            width: 350px;
-            max-height: 500px;
-            background-color: var(--card-bg-color);
-            border-radius: 0.75rem;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
+        .experience-item .details {
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            max-height: 0;
+            opacity: 0;
             overflow: hidden;
-            transform-origin: bottom right;
-            transition: transform 0.3s ease, opacity 0.3s ease;
         }
-        #chat-messages {
-            flex-grow: 1;
-            padding: 1rem;
-            overflow-y: auto;
+        .experience-item.open .details {
+            max-height: 1000px; /* Large enough for content */
+            opacity: 1;
         }
-        .message {
-            margin-bottom: 0.75rem;
-            max-width: 85%;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.75rem;
-            line-height: 1.4;
+        .experience-item.open .icon {
+            transform: rotate(45deg);
         }
-        .user-message {
-            background-color: var(--accent-color);
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 0.25rem;
-        }
-        .bot-message {
-            background-color: #f3f4f6;
-            color: var(--text-primary);
-            align-self: flex-start;
-            border-bottom-left-radius: 0.25rem;
-        }
-        .prompt-button {
-            background-color: transparent;
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .prompt-button:hover {
-            background-color: var(--accent-color);
-            color: white;
-        }
-        .loading-indicator {
-            display: flex;
-            align-items: center;
-            padding: 0.5rem 0.75rem;
-            background-color: #f3f4f6;
-            border-radius: 0.75rem;
-            border-bottom-left-radius: 0.25rem;
-        }
-        .dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--text-secondary);
-            border-radius: 50%;
-            margin: 0 3px;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-        .dot:nth-child(1) { animation-delay: -0.32s; }
-        .dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1.0); }
+         .icon {
+            transition: transform 0.3s ease-in-out;
         }
     </style>
 </head>
-<body class="p-4 sm:p-6 lg:p-8">
+<body class="antialiased">
 
-    <div class="max-w-6xl mx-auto main-layout">
-        <!-- Left Column -->
-        <aside class="space-y-6">
-            <div class="card p-6 text-center">
-                <div class="w-28 h-28 rounded-full mx-auto bg-gray-200 flex items-center justify-center mb-4 ring-4 ring-white">
-                    <span class="text-5xl font-bold text-gray-500">AK</span>
-                </div>
-                <h1 class="text-2xl font-bold text-gray-800">Arsalan Khan</h1>
-                <h2 class="text-md text-accent-color font-semibold">Technical Writer & Documentation Specialist</h2>
-                <p class="text-sm text-gray-500 mt-2">Seattle, WA</p>
-                <div class="flex justify-center space-x-4 mt-5">
-                    <a href="mailto:arifkhanarsalan@gmail.com" title="Email" class="text-gray-400 hover:text-accent-color transition-colors">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22 6C22 4.9 21.1 4 20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6M20 6L12 11L4 6H20M20 18H4V8L12 13L20 8V18Z" /></svg>
-                    </a>
-                    <a href="#" title="LinkedIn" class="text-gray-400 hover:text-accent-color transition-colors">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3A2 2 0 0 1 21 5V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3H19M18.5 18.5V13.2A3.26 3.26 0 0 0 15.24 9.94C14.39 9.94 13.4 10.46 12.92 11.24V10.13H10.13V18.5H12.92V13.57C12.92 12.8 13.54 12.17 14.31 12.17A1.4 1.4 0 0 1 15.71 13.57V18.5H18.5M6.88 8.56A1.68 1.68 0 0 0 8.56 6.88C8.56 5.95 7.81 5.19 6.88 5.19A1.69 1.69 0 0 0 5.19 6.88C5.19 7.81 5.95 8.56 6.88 8.56M8.27 18.5V10.13H5.5V18.5H8.27Z" /></svg>
-                    </a>
-                    <a href="https://github.com/timedilationv2" title="GitHub" target="_blank" class="text-gray-400 hover:text-accent-color transition-colors">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.83,16.41C14.17,16.72 14.5,17.33 14.5,18.26V21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" /></svg>
-                    </a>
-                </div>
+    <div class="container mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
+
+        <!-- Header Section -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12">
+            <div>
+                <h1 class="text-4xl sm:text-5xl font-bold text-white">ARSALAN KHAN</h1>
+                <p class="text-xl sm:text-2xl font-medium text-blue-400 mt-1">Technical Writer (Software, Avionics, Civil)</p>
             </div>
+            <div class="mt-4 sm:mt-0 flex flex-col sm:items-end space-y-2 text-sm">
+                <a href="tel:425-318-9796" class="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    <span>(425) 318-9796</span>
+                </a>
+                <a href="mailto:arifkhanarsalan@gmail.com" class="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <span>arifkhanarsalan@gmail.com</span>
+                </a>
+                <a href="https://www.linkedin.com/in/timedilation" target="_blank" class="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                    <span>linkedin.com/in/timedilation</span>
+                </a>
+                <a href="https://github.com/timedilationv2" target="_blank" class="flex items-center space-x-2 text-gray-300 hover:text-blue-400 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                    <span>github.com/timedilationv2</span>
+                </a>
+            </div>
+        </header>
 
-            <div class="card p-6">
-                <h3 class="text-xl font-bold mb-4">Toolkit</h3>
-                <div class="space-y-5">
-                    <div>
-                        <h4 class="font-semibold text-gray-700 mb-2">Core Disciplines</h4>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="skill-tag">Technical Writing</span>
-                            <span class="skill-tag">Content Strategy</span>
-                            <span class="skill-tag">Information Architecture</span>
-                            <span class="skill-tag">Developer Education</span>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-700 mb-2">Technologies & Tools</h4>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="skill-tag">AWS, GCP, Azure</span>
-                            <span class="skill-tag">Git & GitHub</span>
-                            <span class="skill-tag">Terraform & CI/CD</span>
-                            <span class="skill-tag">Markdown & DITA/XML</span>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold text-gray-700 mb-2">Languages</h4>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="skill-tag">Python</span>
-                            <span class="skill-tag">JavaScript</span>
-                            <span class="skill-tag">Bash</span>
-                        </div>
+        <!-- Professional Summary -->
+        <section class="mb-12 bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold text-white mb-4 section-title">Professional Summary</h2>
+            <p class="text-gray-300 leading-relaxed">
+                Technical writer and systems builder with 8+ years of experience delivering high-impact documentation across SaaS, DevOps, Aviation, and Systems Engineering domains. I specialize in developer-first documentation systems that clarify complex workflows—API references, onboarding guides, CI/CD runbooks, and internal tools. Fluent in Markdown, OpenAPI, GitHub Actions, GCP, and docs-as-code workflows, I bring hands-on expertise in automating documentation pipelines and improving cross-functional collaboration between engineering, product, and support teams.
+            </p>
+            <p class="text-gray-300 leading-relaxed mt-4">
+                I thrive in environments where clarity, modularity, and real technical understanding drive documentation quality. My work bridges writing and engineering—bringing structure to chaos and enabling teams to scale with confidence.
+            </p>
+        </section>
+
+        <!-- Skills Section -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-white section-title">Skills</h2>
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button class="skill-tab active px-4 py-2 text-sm font-medium rounded-full bg-gray-700 hover:bg-blue-600 transition-colors" data-tab="doc-writing">Documentation & Writing</button>
+                <button class="skill-tab px-4 py-2 text-sm font-medium rounded-full bg-gray-700 hover:bg-blue-600 transition-colors" data-tab="dev-tooling">Developer Tooling</button>
+                <button class="skill-tab px-4 py-2 text-sm font-medium rounded-full bg-gray-700 hover:bg-blue-600 transition-colors" data-tab="cloud-devops">Cloud & DevOps</button>
+                <button class="skill-tab px-4 py-2 text-sm font-medium rounded-full bg-gray-700 hover:bg-blue-600 transition-colors" data-tab="ai-automation">AI & Automation</button>
+                <button class="skill-tab px-4 py-2 text-sm font-medium rounded-full bg-gray-700 hover:bg-blue-600 transition-colors" data-tab="cross-functional">Cross-Functional</button>
+            </div>
+            <div id="skills-content" class="bg-gray-800 p-6 rounded-lg shadow-lg min-h-[150px]">
+                <!-- Documentation & Writing -->
+                <div class="skill-content active" id="doc-writing">
+                    <div class="flex flex-wrap gap-3">
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Docs-as-Code (Markdown, Git)</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">REST API & OpenAPI Documentation</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Onboarding & Internal Guides</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Modular Help Center Design</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">SOPs, Runbooks, & Knowledge Bases</span>
                     </div>
                 </div>
-            </div>
-        </aside>
-
-        <!-- Right Column -->
-        <main class="space-y-6">
-            <div class="card p-6">
-                <h3 class="text-2xl font-bold">Summary</h3>
-                <p class="mt-2 text-gray-600 leading-relaxed">
-                    A technical writer with a passion for simplifying complexity. My background in journalism taught me to find the story in any subject, a skill I now apply to technology. I translate the logic of software, cloud infrastructure, and APIs into clear, concise documentation that empowers developers and users. I believe the best documentation isn't just a manual—it's an essential part of a successful product.
-                </p>
-            </div>
-
-            <div class="card">
-                <div class="p-6 border-b border-gray-200">
-                    <div class="flex space-x-8">
-                        <button class="tab-button pb-2 font-semibold" data-target="experience">Experience</button>
-                        <button class="tab-button pb-2 font-semibold" data-target="projects">Projects</button>
-                        <button class="tab-button pb-2 font-semibold" data-target="education">Education</button>
+                <!-- Developer Tooling -->
+                <div class="skill-content hidden" id="dev-tooling">
+                    <div class="flex flex-wrap gap-3">
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Terminal / CLI Workflows</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">FastAPI / Node.js (light tools)</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">React & Next.js (for docs portals)</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">JSON, YAML, Bash</span>
                     </div>
                 </div>
-
-                <div class="p-6">
-                    <!-- Experience Section -->
-                    <div id="experience" class="content-section">
-                        <div class="timeline">
-                             <div class="timeline-item">
-                                <h5 class="font-bold text-lg">Cloud Infrastructure & Docs Consultant</h5>
-                                <p class="text-sm text-gray-500">Self-Directed | 2020 - Present</p>
-                                <p class="mt-2 text-gray-600">Architected developer-centric documentation for cloud SDKs (AWS, GCP, Azure) and automated CI/CD doc pipelines.</p>
-                            </div>
-                            <div class="timeline-item">
-                                <h5 class="font-bold text-lg">Technical Writer & DocOps Architect</h5>
-                                <p class="text-sm text-gray-500">AVIC Heavy Machinery | 2013 - 2020</p>
-                                <p class="mt-2 text-gray-600">Translated complex engineering schematics and standardized documentation workflows with DITA/XML and Markdown.</p>
-                            </div>
-                            <div class="timeline-item">
-                                <h5 class="font-bold text-lg">Copywriter & Content Specialist</h5>
-                                <p class="text-sm text-gray-500">QUBEE | 2012 - 2014</p>
-                                <p class="mt-2 text-gray-600">My entry into tech, turning dense service details into clear, customer-facing copy and support guides.</p>
-                            </div>
-                        </div>
+                <!-- Cloud & DevOps -->
+                <div class="skill-content hidden" id="cloud-devops">
+                    <div class="flex flex-wrap gap-3">
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">GitHub Actions / GitLab CI</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Google Cloud Platform (GCP)</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">AWS (EC2, S3, IAM, CLI)</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Docker & Containerization</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Kubernetes (basic familiarity)</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Infrastructure Concepts (IaC-lite)</span>
                     </div>
-
-                    <!-- Projects Section -->
-                    <div id="projects" class="content-section space-y-6">
-                         <div class="project-card p-4">
-                            <h4 class="text-lg font-bold text-gray-800">Skittly - Full-Stack Project Management Tool</h4>
-                            <p class="mt-1 text-gray-600 text-sm">A complete MERN-stack application built from the ground up, demonstrating full-stack development capabilities. Skittly is a lightweight, open-source alternative to traditional project management tools, featuring a documented API and a deployed frontend.</p>
-                            <div class="mt-3 flex space-x-4">
-                                <a href="https://skittle-frontend.vercel.app/" target="_blank" class="text-sm font-semibold text-accent-color hover:underline">Live App &rarr;</a>
-                                <a href="https://github.com/timedilationv2/skittly-frontend" target="_blank" class="text-sm font-semibold text-accent-color hover:underline">Frontend Repo &rarr;</a>
-                            </div>
-                        </div>
-                        <div class="project-card p-4">
-                            <h4 class="text-lg font-bold text-gray-800">Sophie AI - Conversational AI Chatbot</h4>
-                            <p class="mt-1 text-gray-600 text-sm">A self-contained, customizable AI chatbot built with Python and Flask. This project showcases the ability to integrate AI/ML models into a functional web application, creating an interactive and engaging user experience.</p>
-                            <div class="mt-3">
-                                <a href="https://github.com/timedilationv2/sophie-ai" target="_blank" class="text-sm font-semibold text-accent-color hover:underline">View on GitHub &rarr;</a>
-                            </div>
-                        </div>
-                         <div class="project-card p-4">
-                            <h4 class="text-lg font-bold text-gray-800">DitaDocs - Documentation Workflow Tool</h4>
-                            <p class="mt-1 text-gray-600 text-sm">A command-line tool written in Python to solve a common industry problem: converting legacy DITA/XML documentation into modern Markdown. This demonstrates deep domain knowledge in technical writing standards and the ability to build tools that improve documentation workflows.</p>
-                            <div class="mt-3">
-                                <a href="https://github.com/timedilationv2/ditadocs" target="_blank" class="text-sm font-semibold text-accent-color hover:underline">View on GitHub &rarr;</a>
-                            </div>
-                        </div>
+                </div>
+                <!-- AI & Automation -->
+                <div class="skill-content hidden" id="ai-automation">
+                    <div class="flex flex-wrap gap-3">
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">OpenAI API Integration</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">LangChain / LLM Prompt Workflows</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Python + API Automation</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Webhook & GitOps Automations</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">RSS Automation Pipelines</span>
                     </div>
-
-                    <!-- Education Section -->
-                    <div id="education" class="content-section">
-                        <h3 class="text-xl font-bold mb-4">Education & Certifications</h3>
-                        <div class="mb-6 p-4 bg-gray-50 rounded-lg border">
-                            <h4 class="font-semibold">Karachi University</h4>
-                            <p class="text-gray-600">Bachelor of Applied Science</p>
-                            <p class="text-sm text-gray-500">Graduated: 2012</p>
-                        </div>
-                        <h4 class="font-semibold mb-2">Key Certifications</h4>
-                        <ul class="list-disc list-inside text-gray-600 space-y-2 pl-2">
-                           <li>Google Project Management Certificate</li>
-                           <li>NVIDIA AI Infrastructure and Operations Fundamentals</li>
-                           <li>Microsoft Certified: Linux on Azure</li>
-                           <li>AWS Certified Solutions Architect (Associate)</li>
-                           <li>Professional Cloud Architect (Google Cloud)</li>
-                        </ul>
+                </div>
+                 <!-- Cross-Functional -->
+                <div class="skill-content hidden" id="cross-functional">
+                    <div class="flex flex-wrap gap-3">
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Information Architecture</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Systems Thinking</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Agile Documentation</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">SME Collaboration</span>
+                        <span class="bg-gray-700 text-blue-300 text-sm font-medium px-3 py-1 rounded-full">Developer Empathy</span>
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
+        </section>
 
-    <!-- Chatbot Widget -->
-    <div id="chat-widget">
-        <div id="chat-window" class="hidden">
-            <div class="p-3 bg-gray-100 border-b border-gray-200 flex justify-between items-center">
-                <h4 class="font-bold text-gray-800 text-sm">AI Assistant</h4>
-                <button id="chat-close" class="text-gray-500 hover:text-gray-800 text-2xl leading-none">&times;</button>
+        <!-- Professional Experience -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-white section-title">Professional Experience</h2>
+            <div class="space-y-4" id="experience-container">
+                <!-- Experience items will be injected here by JS -->
             </div>
-            <div id="chat-messages" class="flex flex-col p-3">
-                 <!-- Initial bot message and prompts will be injected here -->
-            </div>
-            <div class="p-2 border-t border-gray-200">
-                <div class="flex">
-                    <input type="text" id="chat-input" placeholder="Or type your own question..." class="flex-grow border border-gray-300 rounded-l-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-accent-color text-sm">
-                    <button id="chat-send" class="bg-accent-color text-white px-4 py-2 rounded-r-md hover:bg-blue-700 transition-colors">Send</button>
+        </section>
+
+        <!-- Education & Certifications -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-white section-title">Education & Certifications</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-bold text-white">Karachi University</h3>
+                    <p class="text-blue-400 font-medium">Bachelor of Applied Science (BASc), Technical, Scientific, and Business Writing</p>
+                    <p class="text-sm text-gray-400 mt-1">Mar 2008 – Jun 2011 · Karachi, Pakistan</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-bold text-white">Independent Study (Full-Time)</h3>
+                    <p class="text-blue-400 font-medium">Systems Architecture, Automation, Cloud, AI, Business, Neuroinformatics, and Documentation Design</p>
+                    <p class="text-sm text-gray-400 mt-2">Self-directed, project-based learning focused on building real-world systems across DevOps, documentation infrastructure, and AI tools.</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg md:col-span-2">
+                     <h3 class="text-lg font-bold text-white mb-3">Certifications</h3>
+                     <ul class="list-disc list-inside text-gray-300 space-y-1">
+                        <li>Project Management – Google / Coursera · Issued Feb 2023</li>
+                        <li>AWS Certified – Coursera</li>
+                        <li>Microsoft Certified Solutions Associate: Linux on Azure</li>
+                     </ul>
                 </div>
             </div>
-        </div>
-        <div id="chat-bubble">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 5.523-4.477 10-10 10S1 17.523 1 12 5.477 2 11 2s10 4.477 10 10z"></path></svg>
-        </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 text-sm mt-12">
+            <p>Built with passion and code. &copy; 2024 Arsalan Khan.</p>
+            <p>This interactive resume was designed to showcase skills in action.</p>
+        </footer>
+
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const tabs = document.querySelectorAll('.tab-button');
-        const sections = document.querySelectorAll('.content-section');
-        const chatBubble = document.getElementById('chat-bubble');
-        const chatWindow = document.getElementById('chat-window');
-        const chatClose = document.getElementById('chat-close');
-        const chatInput = document.getElementById('chat-input');
-        const chatSend = document.getElementById('chat-send');
-        const chatMessages = document.getElementById('chat-messages');
-        const apiKey = ""; // This will be handled by the environment
+        // --- Interactive Skills Section ---
+        const skillTabs = document.querySelectorAll('.skill-tab');
+        const skillContents = document.querySelectorAll('.skill-content');
 
-        // Tab functionality
-        function setActiveTab(targetId) {
-            tabs.forEach(tab => tab.classList.toggle('active', tab.dataset.target === targetId));
-            sections.forEach(section => section.classList.toggle('active', section.id === targetId));
-        }
-        tabs.forEach(tab => tab.addEventListener('click', () => setActiveTab(tab.dataset.target)));
-        setActiveTab('experience'); // Initial active tab
-
-        // Chatbot functionality
-        const initialPrompts = [
-            "What's his experience with AI?",
-            "Tell me about his full-stack project.",
-            "What makes him a 'creative' technologist?",
-        ];
-
-        function showInitialPrompts() {
-            chatMessages.innerHTML = ''; // Clear previous messages
-            const greeting = document.createElement('div');
-            greeting.classList.add('message', 'bot-message');
-            greeting.innerHTML = "Greetings 👋 - I am the virtual technical writing version of Arsalan. Here are some quick questions you can ask:";
-            chatMessages.appendChild(greeting);
-
-            const promptContainer = document.createElement('div');
-            promptContainer.id = 'prompt-container';
-            promptContainer.className = 'flex flex-col space-y-2 mt-2';
-            
-            initialPrompts.forEach(promptText => {
-                const button = document.createElement('button');
-                button.textContent = promptText;
-                button.classList.add('prompt-button');
-                button.addEventListener('click', () => sendMessage(promptText));
-                promptContainer.appendChild(button);
-            });
-            chatMessages.appendChild(promptContainer);
-        }
-
-        chatBubble.addEventListener('click', () => {
-            chatWindow.classList.remove('hidden');
-            showInitialPrompts();
-            chatInput.focus();
-        });
-
-        chatClose.addEventListener('click', () => {
-            chatWindow.classList.add('hidden');
-        });
-
-        const sendMessage = async (text = null) => {
-            const userInput = text || chatInput.value.trim();
-            if (!userInput) return;
-
-            const promptContainer = document.getElementById('prompt-container');
-            if (promptContainer) promptContainer.remove();
-
-            appendMessage(userInput, 'user');
-            if(!text) chatInput.value = '';
-            showLoading(true);
-
-            const resumeContext = `
-                Arsalan Khan is a Technical Writer & Documentation Specialist.
-                Summary: A writer who translates complex tech concepts. Started in journalism, now bridges engineering and user understanding.
-                Experience:
-                - Cloud Docs Consultant (2020-Present): Authored docs for AWS, GCP, Azure; automated CI/CD pipelines.
-                - Tech Writer at AVIC (2013-2020): Translated schematics, standardized docs with DITA/XML.
-                - Copywriter at QUBEE (2012-2014): Wrote customer-facing copy.
-                Projects:
-                - Skittly: Full-stack MERN project management tool.
-                - Sophie AI: Conversational AI chatbot using Python/Flask.
-                - DitaDocs: Python tool to convert DITA/XML to Markdown.
-                Creative aspect: His journalism background informs his ability to find a narrative in technical topics. He builds his own tools (Sophie AI, DitaDocs) showing a creative developer mindset.
-                Skills: Technical Writing, Content Strategy, AWS, GCP, Azure, Git, Terraform, CI/CD, Python, JavaScript.
-            `;
-
-            const prompt = `You are a friendly, professional AI assistant for Arsalan Khan's resume. Answer concisely based ONLY on the provided context. If the answer isn't in the context, say "That's a great question. I'd recommend connecting with Arsalan directly for more details."\n\nContext:\n${resumeContext}\n\nUser Question: ${userInput}\n\nAnswer:`;
-            
-            try {
-                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+        skillTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Deactivate all tabs and content
+                skillTabs.forEach(t => t.classList.remove('active'));
+                skillContents.forEach(c => {
+                    c.classList.add('hidden');
+                    c.classList.remove('active');
                 });
 
-                if (!response.ok) throw new Error(`API Error: ${response.status}`);
-
-                const result = await response.json();
-                const botResponse = result.candidates[0]?.content?.parts[0]?.text || "Sorry, I couldn't process that.";
-                appendMessage(botResponse, 'bot');
-
-            } catch (error) {
-                console.error('Gemini API Error:', error);
-                appendMessage("Sorry, I'm having trouble connecting. Please try again later.", 'bot');
-            } finally {
-                showLoading(false);
-            }
-        };
-
-        chatSend.addEventListener('click', () => sendMessage());
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
+                // Activate clicked tab and corresponding content
+                tab.classList.add('active');
+                const targetContent = document.getElementById(tab.dataset.tab);
+                if (targetContent) {
+                    targetContent.classList.remove('hidden');
+                    targetContent.classList.add('active');
+                }
+            });
         });
 
-        function appendMessage(text, type) {
-            const messageDiv = document.createElement('div');
-            messageDiv.textContent = text;
-            messageDiv.classList.add('message', type === 'user' ? 'user-message' : 'bot-message');
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function showLoading(isLoading) {
-            let loadingDiv = document.getElementById('loading-indicator');
-            if (isLoading) {
-                if (!loadingDiv) {
-                    loadingDiv = document.createElement('div');
-                    loadingDiv.id = 'loading-indicator';
-                    loadingDiv.classList.add('message', 'loading-indicator');
-                    loadingDiv.innerHTML = `<div class="dot"></div><div class="dot"></div><div class="dot"></div>`;
-                    chatMessages.appendChild(loadingDiv);
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }
-            } else {
-                if (loadingDiv) loadingDiv.remove();
+        // --- Interactive Experience Section ---
+        const experienceData = [
+            {
+                title: 'Technical Writer - Freelance',
+                company: 'Open-Source Contributor',
+                date: 'February 2023 – Present',
+                contributions: [
+                    'Built and maintained <strong>docs-as-code systems</strong> using Markdown, Git, and GitHub Actions',
+                    'Authored API references, onboarding guides, and internal runbooks for <strong>open-source developer tools</strong>',
+                    'Collaborated with maintainers and engineers across the <strong>GitHub and CNCF ecosystem</strong>',
+                    'Automated documentation pipelines with <strong>CI workflows and modular content structures</strong>',
+                    'Contributed to <strong>community-driven projects</strong> with a focus on clarity, reusability, and developer experience'
+                ]
+            },
+            {
+                title: 'Procedure Writer',
+                company: 'Chevron FCU (Contract via Aston Carter)',
+                date: 'Sep 2022 – Feb 2023',
+                contributions: [
+                    'Developed structured SOPs for <strong>automation-driven workflows</strong> during system modernization',
+                    'Translated complex SME input into <strong>clear, audit-ready procedures</strong>',
+                    'Built reusable templates to improve <strong>long-term documentation consistency</strong>',
+                    'Streamlined internal ops through <strong>step-by-step procedural documentation</strong>',
+                    'Supported change management with <strong>clarity-focused internal guides and logic mapping</strong>'
+                ]
+            },
+            {
+                title: 'Technical Writer',
+                company: 'AVIC Heavy Machinery Co., Ltd.',
+                date: 'Jan 2016 – Jan 2020 · Hybrid · Pakistan',
+                contributions: [
+                    'Documented inspection results for <strong>jet engine systems, avionics, and fuselage components</strong>',
+                    'Translated engineering schematics into <strong>flight-readiness and compliance reports</strong>',
+                    'Maintained a structured archive of <strong>inspection records and revision-controlled diagrams</strong>',
+                    'Supported digital handover processes and <strong>technical review workflows</strong>',
+                    'Acted as liaison between <strong>Chinese aerospace engineers and Pakistani field teams</strong>'
+                ]
+            },
+            {
+                title: 'Technical Writer – Equipment Inspection & Energy Systems',
+                company: 'AVIC Heavy Machinery',
+                date: 'Mar 2014 – Jan 2016 · Hybrid · Pakistan',
+                contributions: [
+                    'Conducted inspections of <strong>GE Frame turbines and Wartsila systems</strong> across multiple facilities',
+                    'Authored <strong>maintenance manuals, inspection reports, and system handover documents</strong>',
+                    'Created translated diagrams and <strong>configuration reference sheets</strong> for engineering teams',
+                    'Produced structured reports for <strong>internal use and client-facing technical audits</strong>',
+                    'Ensured documentation met <strong>international compliance and quality standards</strong>'
+                ]
+            },
+            {
+                title: 'Copywriter',
+                company: 'Qubee ISP',
+                date: 'May 2012 – Feb 2014 · On-site · Karachi, Pakistan',
+                contributions: [
+                    'Created FAQs, setup guides, and <strong>printed support content</strong> for field and CS teams',
+                    'Translated service details into <strong>accessible, user-friendly language</strong>',
+                    'Standardized tone across <strong>brochures, SMS alerts, and in-store signage</strong>',
+                    'Supported rebranding efforts and <strong>tone-of-voice alignment</strong> during expansion',
+                    'Produced comparisons, guides, and troubleshooting content for <strong>broadband services</strong>'
+                ]
             }
-        }
-    });
+        ];
+
+        const experienceContainer = document.getElementById('experience-container');
+
+        experienceData.forEach((job, index) => {
+            const item = document.createElement('div');
+            item.className = 'experience-item bg-gray-800 p-6 rounded-lg shadow-lg cursor-pointer';
+            
+            let contributionsHTML = job.contributions.map(c => `<li class="text-gray-300 leading-relaxed">${c}</li>`).join('');
+
+            item.innerHTML = `
+                <div class="header flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-bold text-white">${job.title}</h3>
+                        <p class="text-blue-400 font-medium">${job.company}</p>
+                        <p class="text-sm text-gray-400 mt-1">${job.date}</p>
+                    </div>
+                    <div class="icon text-blue-400 text-3xl font-thin">
+                        +
+                    </div>
+                </div>
+                <div class="details mt-4 border-t border-gray-700 pt-4">
+                    <p class="font-semibold text-white mb-2">Key Contributions:</p>
+                    <ul class="list-disc list-inside space-y-2">
+                        ${contributionsHTML}
+                    </ul>
+                </div>
+            `;
+            
+            if (index === 0) {
+                item.classList.add('open');
+            }
+
+            experienceContainer.appendChild(item);
+        });
+
+        // Add click listener to toggle experience details
+        experienceContainer.addEventListener('click', (e) => {
+            const header = e.target.closest('.experience-item');
+            if (header) {
+                header.classList.toggle('open');
+            }
+        });
+
     </script>
 </body>
 </html>
